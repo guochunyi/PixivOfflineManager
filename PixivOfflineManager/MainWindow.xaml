@@ -18,7 +18,7 @@
             <ColumnDefinition Width="7*"/>
         </Grid.ColumnDefinitions>
         <StackPanel Orientation="Vertical">
-            <Button Content="Add folder"/>
+            <Button Content="Add folder" Click="AddFolderClick"/>
             <Button Content="Update Info"/>
         </StackPanel>
         <ListBox Grid.Column="1" x:Name="resultList" ItemsSource="{Binding IlustList}" ItemTemplate="{StaticResource IlustTemplate}" />

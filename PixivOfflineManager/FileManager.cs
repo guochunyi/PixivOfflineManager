@@ -10,20 +10,20 @@ namespace PixivOfflineManager
 {
 	class FileManager
 	{
-		static Regex fileRex = new Regex("([0-9]+)(_.*)*(.jpg)|(.png)");
+		static Regex fileRex = new Regex("([0-9]+)(_.*)*((\\.jpg)|(\\.png))");
 		public List<PicInfo> Files;
-		public FileManager()
+		public FileManager(string path)
 		{
 			Files = new List<PicInfo>();
 			string id;
-			DirectoryInfo lib = new DirectoryInfo("F:\\my picture\\pixiv");
+			DirectoryInfo lib = new DirectoryInfo(path);
 			foreach (FileInfo pic in lib.GetFiles())
 			{
 				if (fileRex.IsMatch(pic.Name))
 				{
 					id = fileRex.Replace(pic.Name, "$1");
 					Files.Add(new PicInfo(id, pic.FullName));
-					Console.WriteLine("{0}=={1}", id, pic.FullName);
+					//Console.WriteLine("{0}=={1}", id, pic.FullName);
 				}
 			}
 		}

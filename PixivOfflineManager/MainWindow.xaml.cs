@@ -30,10 +30,19 @@ namespace PixivOfflineManager
 		public MainWindow()
 		{
 			//PicInfo info = new PicInfo("34655446");
-			FileManager file = new FileManager();
-			file.Files.Last().GetInfo();
-			IlustList = new ObservableCollection<PicInfo>(file.Files);
+			IlustList = new ObservableCollection<PicInfo>();
 			InitializeComponent();
+		}
+
+		private void AddFolderClick(object sender, RoutedEventArgs e)
+		{
+			System.Windows.Forms.FolderBrowserDialog fdb = new System.Windows.Forms.FolderBrowserDialog();
+			fdb.ShowDialog();
+			if (fdb.SelectedPath != string.Empty)
+			{
+				FileManager file = new FileManager(fdb.SelectedPath);
+				IlustList = new ObservableCollection<PicInfo>(file.Files);
+			}
 		}
 	}
 }
