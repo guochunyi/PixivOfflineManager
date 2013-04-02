@@ -13,14 +13,14 @@ namespace PixivOfflineManager
 	public enum InfoStatus { Waiting, Loading, Ready, Error };
 	public class PicInfo
 	{
-		public string Dir;
-		public string Id;
-		public string[] Tags;
-		public string Title;
-		public string Artist;
-		public string Url;
-		public string Description;
-		public InfoStatus Status;
+		public string Dir { get; set; }
+		public string Id { get; set; }
+		public string[] Tags { get; set; }
+		public string Title { get; set; }
+		public string Artist { get; set; }
+		public string Url { get; set; }
+		public string Description { get; set; }
+		public InfoStatus Status { get; set; }
 		public Exception ErrorInfo;
 		public PicInfo(string id, string dir)
 		{
