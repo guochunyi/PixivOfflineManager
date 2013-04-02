@@ -7,12 +7,16 @@ using System.Net;
 using System.IO;
 using CsQuery;
 using System.Text.RegularExpressions;
+using System.Runtime.CompilerServices;
+using System.ComponentModel;
 
 namespace PixivOfflineManager
 {
 	public enum InfoStatus { Waiting, Loading, Ready, Error };
-	public class PicInfo
+	public class PicInfo : INotifyPropertyChanged
 	{
+		public event PropertyChangedEventHandler PropertyChanged;
+		string[] props = new string[] {"Dir", "Id", "Tags", "Title", "Artist", "Url", "Description", "Status" };
 		public string Dir { get; set; }
 		public string Id { get; set; }
 		public string[] Tags { get; set; }
@@ -33,18 +37,20 @@ namespace PixivOfflineManager
 			try
 			{
 				Status = InfoStatus.Loading;
-				CQ dom;
-				WebRequest req = WebRequest.Create("http://www.pixiv.net/member_illust.php?mode=medium&illust_id=" + Id);
-				using (WebResponse result = await req.GetResponseAsync())
+				CQ dom = await Task<CQ>.Run(() =>
 				{
-					using (Stream receviceStream = result.GetResponseStream())
+					WebRequest req = WebRequest.Create("http://www.pixiv.net/member_illust.php?mode=medium&illust_id=" + Id);
+					using (WebResponse result = req.GetResponse())
 					{
-						using (StreamReader readerOfStream = new StreamReader(receviceStream, System.Text.Encoding.GetEncoding("utf-8")))
+						using (Stream receviceStream = result.GetResponseStream())
 						{
-							dom = readerOfStream.ReadToEnd();
+							using (StreamReader readerOfStream = new StreamReader(receviceStream, System.Text.Encoding.GetEncoding("utf-8")))
+							{
+								return new CQ(readerOfStream.ReadToEnd());
+							}
 						}
 					}
-				}
+				});
 //<meta property="og:title" content="まこぴ | 否 [pixiv]">
 				Title = dom["meta[property='og:title']"].Attr("content");
 				Title = Title.Substring(0, new Regex("\\s|\\s").Match(Title).Index);
@@ -63,6 +69,10 @@ namespace PixivOfflineManager
 				DebugInfo();
 #endif
 				Status = InfoStatus.Ready;
+				foreach (string name in props)
+				{
+					PropertyChanged(this, new PropertyChangedEventArgs(name));
+				}
 			}
 			catch (Exception e)
 			{
